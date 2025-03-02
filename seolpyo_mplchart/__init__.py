@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from ._draw import Chart as _BaseChart
-from ._cursor import Chart as _BaseCursorChart, format_candleinfo_ko, format_volumeinfo_ko, format_candleinfo_en, format_volumeinfo_en
+from ._cursor import Chart as _BaseCursorChart, format_candleinfo_en, format_volumeinfo_en
 from ._slider import Chart as _BaseSliderChart
 
 
 __all__ = [
     'path_samsung', 'path_apple',
-    'format_candleinfo_ko', 'format_volumeinfo_ko',
     'format_candleinfo_en', 'format_volumeinfo_en',
     'sample', 'switch_backend', 'show', 'close',
     'OnlyChart', 'CursorChart', 'SliderChart',
@@ -26,16 +25,13 @@ path_apple = Path(__file__).parent / 'sample/apple.txt'
 def sample(stock: Literal['samsung', 'apple']='samsung', chart: Literal['Chart', 'CursorChart', 'SliderChart']='SliderChart'):
     C: _BaseSliderChart = {'Chart': _BaseChart, 'CursorChart': _BaseCursorChart, 'SliderChart': _BaseSliderChart}[chart]()
     path_file = path_samsung if stock == 'samsung' else path_apple
-    if stock == 'samsung':
-        C.format_candleinfo = format_candleinfo_ko
-        C.format_volumeinfo = format_volumeinfo_ko
-    else:
-        C.format_candleinfo = format_candleinfo_en
-        C.format_volumeinfo = format_volumeinfo_en
-        C.unit_price = '$'
-        C.unit_volume = 'Vol'
-        C.digit_price = 3
-        C.format_ma = 'ma{}'
+
+    C.format_candleinfo = format_candleinfo_en
+    C.format_volumeinfo = format_volumeinfo_en
+    C.unit_price = '$'
+    C.unit_volume = 'Vol'
+    C.digit_price = 3
+    C.format_ma = 'ma{}'
 
     with open(path_file, 'r', encoding='utf-8') as txt:
         data = json.load(txt)
@@ -98,7 +94,7 @@ class OnlyChart(_BaseChart):
         Open, high, low, close: price column key. default ('open', 'high', 'low', 'close')
         volume: volume column key. default 'volume'. If ```if self.volume``` is ```False```, the volume chart is not drawn.
 
-        format_ma: moving average legend label format. default '{}일선'
+        format_ma: moving average legend label format. default '{}'
         list_ma: Decide how many days to draw the moving average line. default (5, 20, 60, 120, 240)
         list_macolor: Color the moving average line. If the number of colors is greater than the moving average line, black is applied
 
@@ -147,7 +143,7 @@ class CursorChart(_BaseCursorChart):
     Class Variables:
         watermark: watermark text.
 
-        unit_price, unit_volume: price and volume unit. default ('원', '주').
+        unit_price, unit_volume: price and volume unit. default ('', '').
         digit_price, digit_volume: display decimal places when displaying price and volume. default (0, 0),
 
         figsize: Default size when creating a matplotlib window
@@ -162,7 +158,7 @@ class CursorChart(_BaseCursorChart):
         Open, high, low, close: price column key. default ('open', 'high', 'low', 'close')
         volume: volume column key. default 'volume'. If ```if self.volume``` is ```False```, the volume chart is not drawn.
 
-        format_ma: moving average legend label format. default '{}일선'
+        format_ma: moving average legend label format. default '{}'
         list_ma: Decide how many days to draw the moving average line. default (5, 20, 60, 120, 240)
         list_macolor: Color the moving average line. If the number of colors is greater than the moving average line, black is applied
 
@@ -192,8 +188,8 @@ class CursorChart(_BaseCursorChart):
         textKwargs: A kwarg that applies to the informational text drawn on the chart. When this is applied, the following occurs: ```textKwargs['bbox'] = textboxKwargs```
 
         fraction: Decide whether to express information as a fraction. default False
-        format_candleinfo: Candle information text format. default '{dt}\n\n종가:　 {close}\n등락률: {rate}\n대비:　 {compare}\n시가:　 {open}({rate_open})\n고가:　 {high}({rate_high})\n저가:　 {low}({rate_low})\n거래량: {volume}({rate_volume})'
-        format_volumeinfo: Volume information text format. default '{dt}\n\n거래량:　　　 {volume}\n거래량증가율: {rate_volume}\n대비:　　　　 {compare}'
+        format_candleinfo: Candle information text format. default '{dt}\n\n: {close}\n: {rate}\n: {compare}\n: {open}({rate_open})\n: {high}({rate_high})\n: {low}({rate_low})\n: {volume}({rate_volume})'
+        format_volumeinfo: Volume information text format. default '{dt}\n\n: {volume}\n: {rate_volume}\n: {compare}'
 
         limit_candle: Maximum number of candles to draw. default 800
         limit_wick:  Maximum number of candle wicks to draw. default 4,000
@@ -219,7 +215,7 @@ class SliderChart(_BaseSliderChart):
     Class Variables:
         watermark: watermark text.
 
-        unit_price, unit_volume: price and volume unit. default ('원', '주').
+        unit_price, unit_volume: price and volume unit. default ('', '').
         digit_price, digit_volume: display decimal places when displaying price and volume. default (0, 0),
 
         figsize: Default size when creating a matplotlib window
@@ -236,7 +232,7 @@ class SliderChart(_BaseSliderChart):
         Open, high, low, close: price column key. default ('open', 'high', 'low', 'close')
         volume: volume column key. default 'volume'. If ```if self.volume``` is ```False```, the volume chart is not drawn.
 
-        format_ma: moving average legend label format. default '{}일선'
+        format_ma: moving average legend label format. default '{}'
         list_ma: Decide how many days to draw the moving average line. default (5, 20, 60, 120, 240)
         list_macolor: Color the moving average line. If the number of colors is greater than the moving average line, black is applied
 
@@ -266,8 +262,8 @@ class SliderChart(_BaseSliderChart):
         textKwargs: A kwarg that applies to the informational text drawn on the chart. When this is applied, the following occurs: ```textKwargs['bbox'] = textboxKwargs```
 
         fraction: Decide whether to express information as a fraction. default False
-        format_candleinfo: Candle information text format. default '{dt}\n\n종가:　 {close}\n등락률: {rate}\n대비:　 {compare}\n시가:　 {open}({rate_open})\n고가:　 {high}({rate_high})\n저가:　 {low}({rate_low})\n거래량: {volume}({rate_volume})'
-        format_volumeinfo: Volume information text format. default '{dt}\n\n거래량:　　　 {volume}\n거래량증가율: {rate_volume}\n대비:　　　　 {compare}'
+        format_candleinfo: Candle information text format. default '{dt}\n\: {close}\: {rate}\: {compare}\: {open}({rate_open})\: {high}({rate_high})\: {low}({rate_low})\n: {volume}({rate_volume})'
+        format_volumeinfo: Volume information text format. default '{dt}\
 
         min_distance: Minimum number of candles that can be selected with the slider. default 30
         limit_candle: Maximum number of candles to draw. default 800
@@ -297,19 +293,19 @@ def set_theme(chart: SliderChart|CursorChart|OnlyChart, theme: Literal['light', 
         chart.color_volume_up, chart.color_volume_down = ('#32CD32', '#FF4500')
         chart.color_volume_flat = 'w'
 
-        chart.list_macolor = ('#FFFF00', '#7FFF00', '#00FFFF', '#FFA07A', '#FF00FF')
+        chart.list_macolor = ('#1E90FF', '#FFA500', '#FF1493', '#FFFF00', '#00CED1')
 
         chart.lineKwargs = {'edgecolor': 'w'}
         chart.color_box = 'w'
         chart.textboxKwargs = {'facecolor': 'k', 'edgecolor': 'w'}
         chart.textKwargs = {'color': 'w'}
-        chart.color_navigator_cover, chart.color_navigator_line = ('w', '#FF2400')
+        chart.color_navigator_cover, chart.color_navigator_line = ('k', '#FF2400')
 
         if initialized:
             chart.change_background_color('k')
             chart.change_tick_color('w')
             chart.change_line_color('w')
-            if hasattr(chart, 'navigator'): chart.navigator.set_edgecolor([chart.color_navigator_cover, chart.color_navigator_line])
+            if hasattr(chart, 'navigator'): chart.collection_navigator.set_edgecolor([chart.color_navigator_cover, chart.color_navigator_line])
 
             if hasattr(chart, 'df'):
                 chart.set_data(chart.df, sort_df=False, calc_ma=False, set_candlecolor=True, set_volumecolor=True, calc_info=False, change_lim=False)
@@ -324,22 +320,22 @@ def set_theme(chart: SliderChart|CursorChart|OnlyChart, theme: Literal['light', 
         chart.color_flat = 'k'
         chart.color_up_down, chart.color_down_up = ('w', 'w')
 
-        chart.color_volume_up, chart.color_volume_down = ('#FF4D4D', '#5CA8F4')
-        chart.color_volume_flat = '#A9A9A9'
+        chart.color_volume_up, chart.color_volume_down = ('#FF6666', '#5CA8F4')
+        chart.color_volume_flat = '#808080'
 
-        chart.list_macolor = ('#B22222', '#228B22', '#1E90FF', '#FF8C00', '#4B0082')
+        chart.list_macolor = ('#006400', '#8B008B', '#FFA500', '#0000FF', '#FF0000')
 
         chart.lineKwargs = {'edgecolor': 'k'}
         chart.color_box = 'k'
         chart.textboxKwargs = {'facecolor': 'w', 'edgecolor': 'k'}
         chart.textKwargs = {'color': 'k'}
-        chart.color_navigator_cover, chart.color_navigator_line = ('k', '#1e78ff')
+        chart.color_navigator_cover, chart.color_navigator_line = ('k', '#1E78FF')
 
         if initialized:
             chart.change_background_color('#fafafa')
             chart.change_tick_color('k')
             chart.change_line_color('k')
-            if hasattr(chart, 'navigator'): chart.navigator.set_edgecolor([chart.color_navigator_cover, chart.color_navigator_line])
+            if hasattr(chart, 'navigator'): chart.collection_navigator.set_edgecolor([chart.color_navigator_cover, chart.color_navigator_line])
 
             if hasattr(chart, 'df'):
                 chart.set_data(chart.df, sort_df=False, calc_ma=False, set_candlecolor=True, set_volumecolor=True, calc_info=False, change_lim=False)

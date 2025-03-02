@@ -16,12 +16,6 @@ def float_to_str(num: float, digit=0, plus=False):
     return text
 
 
-dict_unit = {
-    '경': 10_000_000_000_000_000,
-    '조':      1_000_000_000_000,
-    '억':            100_000_000,
-    '만':                 10_000,
-}
 dict_unit_en = {
     'Qd': 1_000_000_000_000_000,
     'T':      1_000_000_000_000,
@@ -31,10 +25,10 @@ dict_unit_en = {
 }
 
 
-def convert_unit(value, digit=0, word='원'):
+def convert_unit(value, digit=0, word='usdt'):
     # print(f'{value=:,}')
     v = abs(value)
-    du = dict_unit if search('[가-힣]', word) else dict_unit_en
+    du = dict_unit_en
     for unit, n in du.items():
         if n <= v:
             # print(f'{n=:,}')
